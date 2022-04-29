@@ -3,7 +3,6 @@ require('./db/mongoose')                    //chama a conexão com o banco de da
 const User = require('./models/user')
 const Task = require('./models/task')
 
-
 const app = express()                       //cria o objeto app -> que é responsável pela execução do servidor
 const port = process.env.PORT || 3000       //cria a porta que o servidor funcionará no navegador
 
@@ -42,7 +41,6 @@ app.get('/users/:id', (req, res) => {
         res.status(404).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
     })
 })
-
 
 app.post('/tasks', (req, res) => {          //cria um endpoint /user
     const user = new Task(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
