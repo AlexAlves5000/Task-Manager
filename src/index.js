@@ -8,72 +8,76 @@ const port = process.env.PORT || 3000       //cria a porta que o servidor funcio
 
 app.use(express.json())
 
-app.post('/users', (req, res) => {          //cria um endpoint /users -> para criar um novo registro -> método post
+app.post('/users', async (req, res) => {          //cria um endpoint /users -> para criar um novo registro -> método post
     const user = new User(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
-
-    user.save().then(() => {                //
-        res.status(201).send(user)          // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-    }).catch((e) => {                       //
-        res.status(400).send(e)             // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    })
+    try{
+        await user.save()
+        res.status(201).send(user) 
+    } catch (e) {
+        res.status(400).send(e)
+    }
 })
 
-app.get('/users', (req, res) => {          // cria um endpoint /users para pesquisar todos os registros, método get
-    User.find({}).then((users) => {        // pesquisa no DB usando o método do mongoose model.find({}) -> neste caso pesquisa tudo
+app.get('/users', async (req, res) => {          // cria um endpoint /users para pesquisar todos os registros, método get
+    try {
+        const users = await User.find({})
         res.status(200).send(users)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
         console.log(users)
-    }).catch((e) => {                      //
-        res.status(500).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    })
+    } catch (e) {
+        res.status(500).send(e)
+    }
 })
 
-app.get('/users/:id', (req, res) => {
+app.get('/users/:id', async (req, res) => {
+    
     const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
 
-    User.findById({_id}).then((user) => {  // pesquisa no DB usando o método do mongoose model.find({}) -> neste caso pesquisa tudo
+    try {
+        const user = await User.findById({_id})
         if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
             return res.status(404).send()  // vamos retornar o status de erro 404
         }
-
         res.status(200).send(user)         // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
         console.log(user)
-    }).catch((e) => {                      //
-        res.status(404).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    })
+    } catch (e) {
+        res.status(404).send(e)
+    }
 })
 
-app.post('/tasks', (req, res) => {          //cria um endpoint /user
-    const user = new Task(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
+app.post('/tasks', async(req, res) => {          //cria um endpoint /user
+    const task = new Task(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
 
-    user.save().then(() => {                //
-        res.staus(201).send(user)           // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-    }).catch((e) => {                       //
-        res.status(400).send(e)             // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    })
+    try {
+        await task.save()
+        res.staus(201).send(task)
+    } catch (e) {
+        res.status(400).send(e)
+    }
 })
 
-app.get('/tasks', (req, res) => {          // cria um endpoint /users para pesquisar todos os registros, método get
-    Task.find({}).then((tasks) => {        // pesquisa no DB usando o método do mongoose model.find({}) -> neste caso pesquisa tudo
+app.get('/tasks', async (req, res) => {          // cria um endpoint /users para pesquisar todos os registros, método get
+    try {
+        const tasks = await Task.find({})
         res.status(200).send(tasks)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
         console.log(tasks)
-    }).catch((e) => {                      //
-        res.status(500).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    })
+    } catch (e) {
+        res.status(500).send(e)
+    }
 })
 
-app.get('/tasks/:id', (req, res) => {
+app.get('/tasks/:id', async (req, res) => {
     const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
     
-    Task.findById({_id}).then((tasks) => { // pesquisa no DB usando o método do mongoose model.find({}) -> neste caso pesquisa tudo
-        if (!tasks) {                      // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
+    try {
+        const task = await Task.findById({_id})
+        if (!task) {                      // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
             return res.status(404).send()  // vamos retornar o status de erro 404
         }
-
-        res.status(200).send(tasks)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(tasks)
-    }).catch((e) => {                      //
+        res.status(200).send(task)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
+        console.log(task)
+    } catch (e) {
         res.status(404).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    })
+    }
 })
 
 app.listen(port, () => {                    //carrega o servidor para ficar 'escutando' a porta 3000
