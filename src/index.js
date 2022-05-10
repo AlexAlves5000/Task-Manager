@@ -44,6 +44,27 @@ app.get('/users/:id', async (req, res) => {
     }
 })
 
+app.patch('/users/:id', async (req, res) => {
+    const updates = Object.keys(req.body)                       //a constante updates recebe os dados que serão atualizados na requisição
+    const allowedUpdates = ['name', 'email', 'password', 'age'] //cria uma constante com quais campos eu posso alterar no Banco de dados
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update)) //verifica dentro da matriz se os campos recebidos pelo doby estão
+
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' })
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+
+        if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
+            return res.status(404).send()  // vamos retornar o status de erro 404
+        }
+        res.send(user)
+    } catch (e) {
+        res.status(404).send(e)
+    }
+})
+
 app.post('/tasks', async(req, res) => {          //cria um endpoint /user
     const task = new Task(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
 
@@ -77,6 +98,27 @@ app.get('/tasks/:id', async (req, res) => {
         console.log(task)
     } catch (e) {
         res.status(404).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
+    }
+})
+
+app.patch('/tasks/:id', async (req, res) => {
+    const updates = Object.keys(req.body)                       //a constante updates recebe os dados que serão atualizados na requisição
+    const allowedUpdates = ['description', 'completed'] //cria uma constante com quais campos eu posso alterar no Banco de dados
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update)) //verifica dentro da matriz se os campos recebidos pelo doby estão
+
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' })
+    }
+
+    try {
+        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+
+        if (!task) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
+            return res.status(404).send()  // vamos retornar o status de erro 404
+        }
+        res.send(task)
+    } catch (e) {
+        res.status(404).send(e)
     }
 })
 
