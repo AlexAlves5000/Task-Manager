@@ -17,7 +17,6 @@ router.get('/tasks', async (req, res) => {    // cria um endpoint /tasks para pe
     try {
         const tasks = await Task.find({})
         res.status(200).send(tasks)           // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(tasks)
     } catch (e) {
         res.status(500).send(e)
     }
@@ -32,7 +31,6 @@ router.get('/tasks/:id', async (req, res) => {
             return res.status(404).send()  // vamos retornar o status de erro 404
         }
         res.status(200).send(task)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(task)
     } catch (e) {
         res.status(404).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
     }
@@ -44,7 +42,7 @@ router.patch('/tasks/:id', async (req, res) => {
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update)) //verifica dentro da matriz se os campos recebidos pelo doby estão
 
     if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' })
+        return res.status(400).send({ error: 'Invalid updates!' }) //trata o erro
     }
 
     try {
