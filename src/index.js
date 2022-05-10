@@ -1,126 +1,14 @@
 const express = require('express')          //carrega a biblioteca express
 require('./db/mongoose')                    //chama a conexão com o banco de dados
-const User = require('./models/user')
-const Task = require('./models/task')
+const userRouter = require('./routers/user')//chama o as rotas contidas no aquivo de rotas para usuários
+const taskRouter = require('./routers/task')
 
 const app = express()                       //cria o objeto app -> que é responsável pela execução do servidor
 const port = process.env.PORT || 3000       //cria a porta que o servidor funcionará no navegador
 
 app.use(express.json())
-
-app.post('/users', async (req, res) => {          //cria um endpoint /users -> para criar um novo registro -> método post
-    const user = new User(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
-    try{
-        await user.save()
-        res.status(201).send(user) 
-    } catch (e) {
-        res.status(400).send(e)
-    }
-})
-
-app.get('/users', async (req, res) => {          // cria um endpoint /users para pesquisar todos os registros, método get
-    try {
-        const users = await User.find({})
-        res.status(200).send(users)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(users)
-    } catch (e) {
-        res.status(500).send(e)
-    }
-})
-
-app.get('/users/:id', async (req, res) => {
-    
-    const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
-
-    try {
-        const user = await User.findById({_id})
-        if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
-        res.status(200).send(user)         // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(user)
-    } catch (e) {
-        res.status(404).send(e)
-    }
-})
-
-app.patch('/users/:id', async (req, res) => {
-    const updates = Object.keys(req.body)                       //a constante updates recebe os dados que serão atualizados na requisição
-    const allowedUpdates = ['name', 'email', 'password', 'age'] //cria uma constante com quais campos eu posso alterar no Banco de dados
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update)) //verifica dentro da matriz se os campos recebidos pelo doby estão
-
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' })
-    }
-
-    try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
-
-        if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
-        res.send(user)
-    } catch (e) {
-        res.status(404).send(e)
-    }
-})
-
-app.post('/tasks', async(req, res) => {          //cria um endpoint /user
-    const task = new Task(req.body)         //cria um instância user com o corpo da requisão que foi feita ao servidor
-
-    try {
-        await task.save()
-        res.staus(201).send(task)
-    } catch (e) {
-        res.status(400).send(e)
-    }
-})
-
-app.get('/tasks', async (req, res) => {          // cria um endpoint /users para pesquisar todos os registros, método get
-    try {
-        const tasks = await Task.find({})
-        res.status(200).send(tasks)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(tasks)
-    } catch (e) {
-        res.status(500).send(e)
-    }
-})
-
-app.get('/tasks/:id', async (req, res) => {
-    const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
-    
-    try {
-        const task = await Task.findById({_id})
-        if (!task) {                      // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
-        res.status(200).send(task)        // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(task)
-    } catch (e) {
-        res.status(404).send(e)            // enviamos uma resposta de erro, caso isso ocorra, inclusive enviando um código de erro
-    }
-})
-
-app.patch('/tasks/:id', async (req, res) => {
-    const updates = Object.keys(req.body)                       //a constante updates recebe os dados que serão atualizados na requisição
-    const allowedUpdates = ['description', 'completed'] //cria uma constante com quais campos eu posso alterar no Banco de dados
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update)) //verifica dentro da matriz se os campos recebidos pelo doby estão
-
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' })
-    }
-
-    try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
-
-        if (!task) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
-        res.send(task)
-    } catch (e) {
-        res.status(404).send(e)
-    }
-})
+app.use(userRouter)
+app.use(taskRouter)
 
 app.listen(port, () => {                    //carrega o servidor para ficar 'escutando' a porta 3000
     console.log('Sever is up on port ' + port)
