@@ -48,7 +48,11 @@ router.patch('/users/:id', async (req, res) => {
     }
 
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+        const user = await User.findById(req.params.id) // o user(array) vai receber todos os campos do usuário do banco de dados encontrados por id
+
+        updates.forEach((update) => user[update] = req.body[update]) //aqui o user é alterado com os dados recebidos pelo updates o que for igual permanece, não sabemos quais campos serão alterados
+
+        await user.save() //salvamos o user altedado no banco de dados assim conseguimos executar o middleware (pre) - 'save' do aquivo que usamos o mongoose
 
         if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
             return res.status(404).send()  // vamos retornar o status de erro 404

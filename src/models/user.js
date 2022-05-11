@@ -1,9 +1,10 @@
 // ESTE ARQUIVO CONTEM O MODELO DO BANCO DE DADOS DE USUÁRIOS
 
+const bcrypt = require('bcryptjs/dist/bcrypt')
 const mongoose = require('mongoose')
 const validator = require('validator')
 
-const User = mongoose.model('User', {
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -40,5 +41,17 @@ const User = mongoose.model('User', {
         }
     }
 })
+
+userSchema.pre('save', async function (next) {
+    const user = this
+
+    if (user.isModified('password')) {                          // verifica se o campo password foi alterado, se sim faz o hash da nova senha.
+        user.password = await bcrypt.hash(user.password, 8)
+    }
+
+    next()
+})
+
+const User = mongoose.model('User', userSchema)
 
 module.exports = User
