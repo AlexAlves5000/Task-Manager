@@ -12,11 +12,23 @@ router.post('/users', async (req, res) => {     //cria um endpoint /users -> par
     }
 })
 
+router.post('/users/login', async (req, res) =>{
+    // console.log(req.body.email, req.body.password) --> ok
+
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password) //o findByCredentiails é uma função criada para verificar email e senha, vai retonar um usuário ou não
+                                                                                     //é passado para a função o email e password que é passado no corpo da requisição
+        res.send(user)
+    } catch (e){
+        console.log('entrou aqui')
+        res.status(401).send()
+    }
+})
+
 router.get('/users', async (req, res) => {      // cria um endpoint /users para pesquisar todos os registros, método get
     try {
         const users = await User.find({})
         res.status(200).send(users)             // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(users)
     } catch (e) {
         res.status(500).send(e)
     }
