@@ -28,13 +28,8 @@ router.post('/users/login', async (req, res) =>{
     }
 })
 
-router.get('/users', auth, async (req, res) => {      // cria um endpoint /users para pesquisar todos os registros, método get
-    try {
-        const users = await User.find({})
-        res.status(200).send(users)             // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-    } catch (e) {
-        res.status(500).send(e)
-    }
+router.get('/users/me', auth, async (req, res) => {      // cria um endpoint /users para pesquisar todos os registros, método get
+        res.status(200).send(req.user)   //uma vez que o middleware auth já autenticou o usuário, devemos só devolver os dados do usuário requisitado
 })
 
 router.get('/users/:id', async (req, res) => {
