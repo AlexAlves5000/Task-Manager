@@ -42,13 +42,33 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    tokens: [{
+    tokens: [{                      //Array que de tokens
         token: {
             type: String,
             required: true
         }
     }]
 })
+
+// userSchema.methods.getPublicProfile = function() {
+//     const user = this
+//     const userObject = user.toObject()
+
+//     delete userObject.password
+//     delete userObject.tokens
+
+//     return userObject
+// }
+
+userSchema.methods.toJSON = function() {        //Este método foi usado para devolver o objeto use sem o password e sem os tokens
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject
+}
 
 userSchema.methods.genereteAuthToken = async function () {
     const user = this

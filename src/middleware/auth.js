@@ -11,6 +11,7 @@ const auth = async (req, res, next) => {
             throw new Error()   // este erro será capturado pelo catch abaixo
         }
         
+        req.token = token       //o toquem recebido polo req recebe o token limpo recebido acima 
         req.user = user         //isso faz com que não haja necessidade fazer uma nova pesquisa para descobrir os dados do usuário
         next()
    } catch (e) {

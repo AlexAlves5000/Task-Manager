@@ -31,11 +31,11 @@ app.listen(port, () => {                    //carrega o servidor para ficar 'esc
     console.log('Sever is up on port ' + port)
 })
 
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
 
-const myFunction = async () => {
-    const token = jwt.sign({_id: "alex37645"}, 'segredodoido')
-    console.log(token)
-}
+// const myFunction = async () => {
+//     const token = jwt.sign({_id: "alex37645"}, 'segredodoido')
+//     console.log(token)
+// }
 
-myFunction()
+// myFunction()
