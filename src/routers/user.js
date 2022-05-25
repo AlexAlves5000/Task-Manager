@@ -22,31 +22,59 @@ router.post('/users/login', async (req, res) =>{
         const user = await User.findByCredentials(req.body.email, req.body.password) //o findByCredentiails é uma função criada para verificar email e senha, vai retonar um usuário ou não
                                                                                      //é passado para a função o email e password que é passado no corpo da requisição
         const token = await user.genereteAuthToken()
-        res.send({user, token})    //retorna o usuário e o token
+        // res.send({user: user.getPublicProfile(), token})    //retorna o usuário e o token. a função getPublicProfile é declarada(criada) dentro de models/user.js
+        res.send({user: user, token})    //retorna o usuário e o token. a função getPublicProfile é declarada(criada) dentro de models/user.js
     } catch (e){
         res.status(401).send()
     }
 })
 
-router.get('/users/me', auth, async (req, res) => {      // cria um endpoint /users para pesquisar todos os registros, método get
+router.post('/users/logout', auth, async(req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {   //tokens é uma array. O filter através da função vai encontrar o token q está logado
+            return token.token !== req.token                    //retorna true para todos os tokens que estão logados em outro dispositivo
+        })
+        await req.user.save()                                   //Salva o usuário excluindo o token que fez o logout
+
+        res.status(200).send()
+    } catch {
+        res.status(500).send()
+    }
+})
+
+router.post('/users/logoutAll', auth, async(req, res) => {
+    try {
+        req.user.tokens = []
+        // req.user.tokens = req.user.tokens.filter((token) => {   //tokens é uma array. O filter através da função vai encontrar o token q está logado
+        //     return token.token !== req.token                    //retorna true para todos os tokens que estão logados em outro dispositivo
+        // })
+        await req.user.save()                                   //Salva o usuário excluindo o token que fez o logout
+
+        res.status(200).send()
+    } catch {
+        res.status(500).send()
+    }
+})
+
+router.get('/users/me', auth, async (req, res) => {      
         res.status(200).send(req.user)   //uma vez que o middleware auth já autenticou o usuário, devemos só devolver os dados do usuário requisitado
 })
 
-router.get('/users/:id', async (req, res) => {
+// router.get('/users/:id', async (req, res) => {
     
-    const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
+//     const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
 
-    try {
-        const user = await User.findById({_id})
-        if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
-        res.status(200).send(user)         // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
-        console.log(user)
-    } catch (e) {
-        res.status(404).send(e)
-    }
-})
+//     try {
+//         const user = await User.findById({_id})
+//         if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
+//             return res.status(404).send()  // vamos retornar o status de erro 404
+//         }
+//         res.status(200).send(user)         // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
+//         console.log(user)
+//     } catch (e) {
+//         res.status(404).send(e)
+//     }
+// })
 
 router.patch('/users/:id', async (req, res) => {
     const updates = Object.keys(req.body)                       //a constante updates recebe os dados que serão atualizados na requisição
