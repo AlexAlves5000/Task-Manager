@@ -76,7 +76,7 @@ router.get('/users/me', auth, async (req, res) => {
 //     }
 // })
 
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)                       //a constante updates recebe os dados que serão atualizados na requisição
     const allowedUpdates = ['name', 'email', 'password', 'age'] //cria uma constante com quais campos eu posso alterar no Banco de dados
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update)) //verifica dentro da matriz se os campos recebidos pelo doby estão
@@ -86,28 +86,31 @@ router.patch('/users/:id', async (req, res) => {
     }
 
     try {
-        const user = await User.findById(req.params.id) // o user(array) vai receber todos os campos do usuário do banco de dados encontrados por id
+        // const user = await User.findById(req.params.id) // o user(array) vai receber todos os campos do usuário do banco de dados encontrados por id
+        const user = req.user // o user(array) vai receber todos os campos do usuário do banco de dados encontrados por id
 
         updates.forEach((update) => user[update] = req.body[update]) //aqui o user é alterado com os dados recebidos pelo updates o que for igual permanece, não sabemos quais campos serão alterados
 
         await user.save() //salvamos o user altedado no banco de dados assim conseguimos executar o middleware (pre) - 'save' do aquivo que usamos o mongoose
 
-        if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
+        // if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
+        //     return res.status(404).send()  // vamos retornar o status de erro 404
+        // }
         res.send(user)
     } catch (e) {
         res.status(404).send(e)
     }
 })
 
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/me', auth, async (req, res) => {
     try {
-        const user =  await User.findByIdAndDelete(req.params.id)
-        if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
-            return res.status(404).send()  // vamos retornar o status de erro 404
-        }
-        res.send(user)
+        // const user =  await User.findByIdAndDelete(req.user._id)
+        // if (!user) {                       // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
+        //     return res.status(404).send()  // vamos retornar o status de erro 404
+        // }
+
+        await req.user.remove()             //o método remove do express deleta o documento, neste caso o usuário que foi previamente autenticado, através do middleware auth
+        res.send(req.user)
     } catch (e) {
         res.status(500).send(e)
     }

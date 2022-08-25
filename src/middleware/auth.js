@@ -4,7 +4,7 @@ const User = require("../models/user")
 const auth = async (req, res, next) => {
    try {
         const token = req.header('Authorization').replace('Bearer ', '')            //a variável token recebe o header da solicitação, sem o texto 'Beare '
-        const decoded = jwt.verify(token, '688722An@')                              //a variável decoded recebe um token recebido na solicitação que foi verificado
+        const decoded = jwt.verify(token, '1234567')                                //a variável decoded recebe um token recebido na solicitação que foi verificado
         const user = await User.findOne({ _id: decoded._id, 'tokens.token': token}) //o user recebe um usuario existente e com token existente
 
         if (!user) {
@@ -13,6 +13,7 @@ const auth = async (req, res, next) => {
         
         req.token = token       //o toquem recebido polo req recebe o token limpo recebido acima 
         req.user = user         //isso faz com que não haja necessidade fazer uma nova pesquisa para descobrir os dados do usuário
+        console. log(req.user)
         next()
    } catch (e) {
         res.status(401).send({ error: "Please authenticate." })
