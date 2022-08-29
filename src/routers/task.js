@@ -3,11 +3,11 @@ const Task = require('../models/task')          //cria o objeto Task utilizando 
 const auth = require('../middleware/auth')
 const router = new express.Router()             //cria um objeto router atraves do express, para armazenar as rotas
 
-router.post('/tasks', async(req, res) => {     //cria um endpoint /task
+router.post('/tasks', auth, async(req, res) => {     //cria um endpoint /task
     // const task = new Task(req.body)                   //cria um instância task com o corpo da requisão que foi feita ao servidor
-    console.log(req.user._id) 
+    console.log(req.body) 
     const task = new Task({
-        // ...req.body,
+        ...req.body,
         owner: req.user._id
     })
     

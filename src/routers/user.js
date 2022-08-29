@@ -25,6 +25,7 @@ router.post('/users/login', async (req, res) =>{
         // res.send({user: user.getPublicProfile(), token})    //retorna o usuário e o token. a função getPublicProfile é declarada(criada) dentro de models/user.js
         res.send({user: user, token})    //retorna o usuário e o token. a função getPublicProfile é declarada(criada) dentro de models/user.js
     } catch (e){
+        console.log(e)
         res.status(401).send()
     }
 })
