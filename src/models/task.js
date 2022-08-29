@@ -13,7 +13,8 @@ const Task = mongoose.model('Task', {
     },
     owner: {
          type: mongoose.Schema.Types.ObjectId,
-         require: true
+         require: true,
+         ref: 'User'                        //cria uma referência no DB entre a tarefa e o User - criado no model user.js
     }
 }) 
 

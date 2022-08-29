@@ -4,15 +4,15 @@ const auth = require('../middleware/auth')
 const router = new express.Router()             //cria um objeto router atraves do express, para armazenar as rotas
 
 router.post('/tasks', auth, async(req, res) => {     //cria um endpoint /task
-    // const task = new Task(req.body)                   //cria um instância task com o corpo da requisão que foi feita ao servidor
-    console.log(req.body) 
+    
+    //cria um instância task com o corpo da requisão que foi feita ao servidor
+    
     const task = new Task({
         ...req.body,
         owner: req.user._id
     })
     
     try {
-        console.log(req.user._id)
         await task.save()
         res.status(201).send(task) 
     } catch (e) {
@@ -20,20 +20,22 @@ router.post('/tasks', auth, async(req, res) => {     //cria um endpoint /task
     }
 })
 
-router.get('/tasks', async (req, res) => {    // cria um endpoint /tasks para pesquisar todos os registros, método get
+router.get('/tasks', auth, async (req, res) => {    // cria um endpoint /tasks para pesquisar todos os registros, método get
     try {
-        const tasks = await Task.find({})
+        // const tasks = await Task.find({})
+        const tasks = await Task.find({ owner: req.user._id}) //busca as tarefas somente do usuário logado
         res.status(200).send(tasks)           // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
     } catch (e) {
         res.status(500).send(e)
     }
 })
 
-router.get('/tasks/:id', async (req, res) => {
+router.get('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id              // Cria uma variáve. _id que recebe o parâmetro id da requisição
     
     try {
-        const task = await Task.findById({_id})
+        const task = await Task.findOne({ _id, owner: req.user._id}) //busca uma tarefa especifia de um usuário logado
+        // const task = await Task.findById({_id})
         if (!task) {                      // aqui criamos uma verificação seu foi encontrado o usuário procurado, se não existe
             return res.status(404).send()  // vamos retornar o status de erro 404
         }
