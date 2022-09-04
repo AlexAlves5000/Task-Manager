@@ -34,15 +34,15 @@ app.listen(port, () => {                    //carrega o servidor para ficar 'esc
 const Task = require('./models/task')
 const User = require('./models/user')
 
-const main = async () => {
-    const user = await User.findById('630786765572cf934d0f21ba')
-    await user.populate('tasks')
-    console.log(user.tasks)
+// const main = async () => {
+//     const user = await User.findById('630786765572cf934d0f21ba')
+//     await user.populate('tasks')
+//     // console.log(user.tasks)
 
 
-    // const task = await Task.findById('630786a75572cf934d0f21c6')
-    // await task.populate('owner') //.execPopulate()
-    // console.log(task.owner)
-}
+//     // const task = await Task.findById('630786a75572cf934d0f21c6')
+//     // await task.populate('owner') //.execPopulate()
+//     // console.log(task.owner)
+// }
 
-main()
+// main()

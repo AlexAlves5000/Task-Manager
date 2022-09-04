@@ -2,6 +2,7 @@ const express = require('express')              //carrega o express
 const router = new express.Router()             //cria um objeto router atraves do express, para armazenar as rotas
 const User = require('../models/user')          //cria o objeto User utilizando o mongoose que está no arquivo requerido
 const auth = require('../middleware/auth')      //Carrega o middleware criado no arquivo auth.js, depois é só incluir o auth como segundo argumento na rota
+const Task = require('../models/task')
 
 router.post('/users', async (req, res) => {     //cria um endpoint /users -> para criar um novo registro -> método post
     const user = new User(req.body)             //cria um instância user com o corpo da requisão que foi feita ao servidor

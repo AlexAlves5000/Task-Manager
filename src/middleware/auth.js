@@ -13,7 +13,7 @@ const auth = async (req, res, next) => {
         
         req.token = token       //o toquem recebido polo req recebe o token limpo recebido acima 
         req.user = user         //isso faz com que não haja necessidade fazer uma nova pesquisa para descobrir os dados do usuário
-        console. log(req.user)
+        console. log(req.user.name + ' está logado!')
         next()
    } catch (e) {
         res.status(401).send({ error: "Please authenticate." })

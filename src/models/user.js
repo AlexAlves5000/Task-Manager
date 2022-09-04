@@ -1,9 +1,9 @@
 // ESTE ARQUIVO CONTEM O MODELO DO BANCO DE DADOS DE USUÁRIOS
-
 const bcrypt = require('bcryptjs/dist/bcrypt')
 const mongoose = require('mongoose')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const Task = require('./task')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -48,6 +48,8 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }]
+}, {
+    timestamps: true
 })
 
 userSchema.virtual('tasks', {
@@ -55,16 +57,6 @@ userSchema.virtual('tasks', {
     localField: '_id',
     foreignField: 'owner'
 }) 
-
-// userSchema.methods.getPublicProfile = function() {
-//     const user = this
-//     const userObject = user.toObject()
-
-//     delete userObject.password
-//     delete userObject.tokens
-
-//     return userObject
-// }
 
 userSchema.methods.toJSON = function() {        //Este método foi usado para devolver o objeto use sem o password e sem os tokens
     const user = this
@@ -103,6 +95,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
+// Este middleware criptografa a senha antes do usuário salvar
 userSchema.pre('save', async function (next) {
     const user = this
 
@@ -110,6 +103,13 @@ userSchema.pre('save', async function (next) {
         user.password = await bcrypt.hash(user.password, 8)
     }
 
+    next()
+})
+
+// Deletar task do usuário deletado
+userSchema.pre('remove', async function (next) {
+    const user = this
+    await Task.deleteMany({owner: user._id})
     next()
 })
 
