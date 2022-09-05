@@ -22,19 +22,19 @@ router.post('/tasks', auth, async(req, res) => {     //cria um endpoint /task
 
 // GET /tasks?completed=false --> rota que será filtrar do documentos
 router.get('/tasks', auth, async (req, res) => {    // cria um endpoint /tasks para pesquisar todos os registros, método get
-    console.log('entrou na rota get / tasks')
+    const match = {}
+    
+    if (req.query.completed) {
+        match.completed = req.query.completed === 'true'
+    }
+    
     
     try {
         await req.user.populate({
             path: 'tasks',
-            match: {
-                completed: false
-            }
+            match
         }) //.execPopulate()
         res.send(req.user.tasks)
-       
-        // const tasks = await Task.find({ owner: req.user._id}) //busca as tarefas somente do usuário logado
-        // res.status(200).send(tasks)           // usando o mongoose salvamos o corpo da requisição no banco de dados, neste caso é um novo usuário
     } catch (e) {
         res.status(500).send(e)
     }
