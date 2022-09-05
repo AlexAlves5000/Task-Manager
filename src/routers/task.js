@@ -21,18 +21,22 @@ router.post('/tasks', auth, async(req, res) => {     //cria um endpoint /task
 })
 
 // GET /tasks?completed=false --> rota que será filtrar do documentos
+// GET /tasks?limit=10&skip=20 --> rota que fará a paginação dos resultados
 router.get('/tasks', auth, async (req, res) => {    // cria um endpoint /tasks para pesquisar todos os registros, método get
     const match = {}
     
     if (req.query.completed) {
         match.completed = req.query.completed === 'true'
     }
-    
-    
+        
     try {
         await req.user.populate({
             path: 'tasks',
-            match
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            }
         }) //.execPopulate()
         res.send(req.user.tasks)
     } catch (e) {
