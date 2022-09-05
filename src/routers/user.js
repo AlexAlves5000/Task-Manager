@@ -3,6 +3,7 @@ const router = new express.Router()             //cria um objeto router atraves 
 const User = require('../models/user')          //cria o objeto User utilizando o mongoose que está no arquivo requerido
 const auth = require('../middleware/auth')      //Carrega o middleware criado no arquivo auth.js, depois é só incluir o auth como segundo argumento na rota
 const Task = require('../models/task')
+const multer = require('multer')
 
 router.post('/users', async (req, res) => {     //cria um endpoint /users -> para criar um novo registro -> método post
     const user = new User(req.body)             //cria um instância user com o corpo da requisão que foi feita ao servidor
@@ -116,6 +117,14 @@ router.delete('/users/me', auth, async (req, res) => {
     } catch (e) {
         res.status(500).send(e)
     }
+})
+
+const upload = multer({
+    dest: 'avatars'
+})
+
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+    res.send()
 })
 
 module.exports = router         //exporta a rota para o aquivo index.js, assim o servido express consegue detectar a rota
