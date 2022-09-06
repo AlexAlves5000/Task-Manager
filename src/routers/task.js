@@ -20,6 +20,7 @@ router.post('/tasks', auth, async(req, res) => {     //cria um endpoint /task
     }
 })
 
+// Aula 123
 // GET /tasks?completed=false --> rota que será filtrar do documentos
 // GET /tasks?limit=10&skip=20 --> rota que fará a paginação dos resultados
 // GET /tasks?sortBy=creatdAt:desc
