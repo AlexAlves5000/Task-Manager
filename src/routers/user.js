@@ -4,6 +4,7 @@ const User = require('../models/user')          //cria o objeto User utilizando 
 const auth = require('../middleware/auth')      //Carrega o middleware criado no arquivo auth.js, depois é só incluir o auth como segundo argumento na rota
 const Task = require('../models/task')
 const multer = require('multer')
+const sharp = require('sharp')
 
 router.post('/users', async (req, res) => {     //cria um endpoint /users -> para criar um novo registro -> método post
     const user = new User(req.body)             //cria um instância user com o corpo da requisão que foi feita ao servidor
@@ -143,7 +144,8 @@ const upload = multer({
 // }
 
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    req.user.avatar = req.file.buffer
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer() //formata a imagem antes de gravar
+    req.user.avatar = buffer
     await req.user.save()
     res.send()
 }, (error, req, res, next) => {                         //Função para tratar erros na rota
@@ -166,7 +168,7 @@ router.get('/users/:id/avatar', async (req, res) => {
             throw new Error()
         }
 
-        res.set('Content-type', 'image/jpg')
+        res.set('Content-type', 'image/png')
         res.send(user.avatar)
     } catch (e) {
         res.status(404).send()

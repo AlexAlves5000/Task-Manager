@@ -67,6 +67,7 @@ userSchema.methods.toJSON = function() {        //Este método foi usado para de
 
     delete userObject.password
     delete userObject.tokens
+    delete userObject.avatar
 
     return userObject
 }
