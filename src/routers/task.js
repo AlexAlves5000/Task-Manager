@@ -36,8 +36,7 @@ router.get('/tasks', auth, async (req, res) => {    // cria um endpoint /tasks p
         const parts = req.query.sortBy.split(':')     //Cria uma array parts que possui dois valores, o 1º createdAr e o 2º podendo ser desc ou asc ou nada
         sort[parts[0]] = parts[1] === 'desc' ? -1 : 1 //O objeto sort, createdAt: se o parametro do sortBy for desc ele recebe -1 caso contrário recebe 1
     }
-    
-        
+
     try {
         await req.user.populate({
             path: 'tasks',
