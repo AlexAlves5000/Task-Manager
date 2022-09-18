@@ -3,6 +3,7 @@ const router = new express.Router()             //cria um objeto router atraves 
 const User = require('../models/user')          //cria o objeto User utilizando o mongoose que está no arquivo requerido
 const auth = require('../middleware/auth')      //Carrega o middleware criado no arquivo auth.js, depois é só incluir o auth como segundo argumento na rota
 const Task = require('../models/task')
+const { sendwellcomeEmail, sendcancelationEmail } = require('../emails/account')
 const multer = require('multer')
 const sharp = require('sharp')
 
@@ -11,6 +12,7 @@ router.post('/users', async (req, res) => {     //cria um endpoint /users -> par
     try{
         const token = await user.genereteAuthToken()
         await user.save()
+        sendwellcomeEmail(user.email, user.name)
         res.status(201).send({user, token})
         // res.status(201).send(user) 
     } catch (e) {
@@ -113,6 +115,7 @@ router.delete('/users/me', auth, async (req, res) => {
         //     return res.status(404).send()  // vamos retornar o status de erro 404
         // }
 
+        sendcancelationEmail(req.user.email, req.user.name)
         await req.user.remove()             //o método remove do express deleta o documento, neste caso o usuário que foi previamente autenticado, através do middleware auth
         res.send(req.user)
     } catch (e) {

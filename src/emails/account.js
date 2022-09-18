@@ -1,20 +1,56 @@
 const sgMail = require('@sendgrid/mail')
-const sendgridAPIKey = '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'
+const sendgridAPIKey = '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'
 
 sgMail.setApiKey(sendgridAPIKey)
 
-const msg = {
-    to: 'alexalves5000@gmail.com', // Change to your recipient
-    from: 'alexalves5000@gmail.com', // Change to your verified sender
-    subject: 'Aula 131',
-    text: 'Este é um email de teste.',
-    html: '<strong>Teste de envio de email</strong>',
-  }
-
-sgMail.send(msg)
+const sendwellcomeEmail = (email, name) => {
+    sgMail.send({
+        to: email,
+        from: 'alexalves5000@gmail.com',
+        subject: 'Boas Vindas - Task Manager',
+        text: 'Olá ' + name + ' seja bem vindo ao app Task Manager!'
+    })
     .then(() => {
         console.log('Email enviado')
     })
     .catch((e) => {
         console.error(e)
     })
+}
+
+const sendcancelationEmail = (email, name) => {
+    sgMail.send({
+        to: email,
+        from: 'alexalves5000@gmail.com',
+        subject: 'Sentiremos sua falta!',
+        text: 'Olá ' + name + ', é uma pena que tenha tomado a decisão de cancelar a sua conta no Task Manager, mas ficaremos esperando o seu retorno!'
+    })
+    .then(() => {
+        console.log('Email enviado')
+    })
+    .catch((e) => {
+        console.error(e)
+    })
+}
+
+module.exports = {
+    sendwellcomeEmail,
+    sendcancelationEmail
+}
+
+
+// const msg = {
+//     to: 'alexalves5000@gmail.com', // Change to your recipient
+//     from: 'alexalves5000@gmail.com', // Change to your verified sender
+//     subject: 'Aula 131',
+//     text: 'Este é um email de teste.',
+//     html: '<strong>Teste de envio de email</strong>',
+//   }
+
+// sgMail.send(msg)
+//     .then(() => {
+//         console.log('Email enviado')
+//     })
+//     .catch((e) => {
+//         console.error(e)
+//     })
