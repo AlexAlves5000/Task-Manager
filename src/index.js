@@ -7,6 +7,7 @@ const taskRouter = require('./routers/task')
 const app = express()                       //cria o objeto app -> que é responsável pela execução do servidor
 const port = process.env.PORT               //cria a porta que o servidor funcionará no navegador
 
+
 app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
