@@ -3,7 +3,7 @@
 
 const { MongoClient, ObjectId } = require('mongodb')
 
-const connectionURL = 'mongodb://127.0.0.1:27017'
+const connectionURL = 'mongodb+srv://taskapp:688722Ab@cluster0.ka4yck8.mongodb.net/?retryWrites=true&w=majoritymongodb://127.0.0.1:27017'
 const databaseName = 'task-manager'
 
 
